@@ -23,6 +23,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
+	//relative position of crosshair
+	UPROPERTY(EditAnywhere) //PROPERTY is a programmed cut-and-paste, happens BEFORE the code is compiled
+	float CrossHairXLocation = 0.5f;
+
+	UPROPERTY(EditAnywhere) //PROPERTY is a programmed cut-and-paste, happens BEFORE the code is compiled
+	float CrossHairYLocation = 0.33333f;
 
 	//Start the tank moving the barrel so that a shot would hit where 
 	//crosshair intersects world.
@@ -30,4 +36,8 @@ private:
 
 	//Return OUT parameter, true if hit landscape
 	bool GetSightRayHitLocation(FVector& HitLocation) const;
+
+	//Get
+	bool GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const;
+
 };
