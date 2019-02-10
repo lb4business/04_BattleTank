@@ -16,8 +16,6 @@ void ATankPlayerController::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("PlayerController posessing: %s"), *(ControlledTank->GetName()));
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Player controller begin play"));
 }
 
 // Called every frame
@@ -39,10 +37,28 @@ void ATankPlayerController::AimTowardsCrosshair()
 {
 	if (!GetControlledTank()) { return; }
 
+	FVector HitLocation;
+
+	if (GetSightRayHitLocation(HitLocation)) //has a "side-effect" of line-tracing
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HitLocation: %s"), *(HitLocation.ToString()));
+
+		//TODO tell a tank to aim at this point
+	}
+
+
+
 	//Get world location of linetrace through crosshair
 	//If it hits the landscape
 		//tell controlled tank to aim at this point
 
+}
+
+//Get world location of literace through crosshair, trie if hits landscape
+bool ATankPlayerController::GetSightRayHitLocation(FVector& HitLocation) const
+{
+	HitLocation = FVector(1.0);
+	return true;
 }
 
 
