@@ -16,7 +16,6 @@ ATank::ATank()
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -39,7 +38,7 @@ void ATank::AimAt(FVector HitLocation)
 
 	if (TankAimingComponent != nullptr)
 	{
-		TankAimingComponent->AimAt(HitLocation);
+		TankAimingComponent->AimAt(HitLocation, LaunchSpeed);
 	}
 }
 
