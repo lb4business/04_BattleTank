@@ -48,7 +48,7 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 	FVector StartLocation = Barrel->GetSocketLocation(FName("Projectile"));
 
 	//Calculate 
-	if (UGameplayStatics::SuggestProjectileVelocity(
+	bool bHaveimSolution = UGameplayStatics::SuggestProjectileVelocity(
 		this,
 		OutLaunchVelocity,
 		StartLocation,
@@ -58,13 +58,25 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 		0.0f,
 		0.0f,
 		ESuggestProjVelocityTraceOption::DoNotTrace
-		))
+	);
+
+	if (bHaveimSolution)
 	{
 		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
+		MoveBarrelTowards(AimDirection);
 		UE_LOG(LogTemp, Warning, TEXT("TossVelocity: %s"), *(AimDirection.ToString()));
 	}
-
-
-
 }
 
+
+void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
+{
+	//Work-ot difference between current barrel rotattion and AimDirection
+	auto BarrelRotation = Barrel->GetForwardVector().Rotation();//get roll, pitch and yaw
+	auto AimAsRotator = AimDirection.Rotation();
+	auto DeltaRotator = AimAsRotator - BarrelRotation;
+	UE_LOG(LogTemp, Warning, TEXT("Aim rotator: %s"), *AimAsRotator.ToString());
+
+	//Move the barrel the right amount this frame
+	//Given a max elevation speed and the frame time
+}
