@@ -20,6 +20,21 @@ void ATankAIController::BeginPlay()
 }
 
 
+// Called every frame
+void ATankAIController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	//TODO tell a tank to aim at this point
+	ATank* PlayerTank = GetPlayerTank();
+
+	if (PlayerTank != nullptr)
+	{
+		GetControlledTank()->AimAt(PlayerTank->GetActorLocation());
+	}
+}
+
+
 ATank* ATankAIController::GetControlledTank() const
 {
 	return Cast<ATank>(GetPawn()); //What tank are we controlling? TANK is a child of PAWN, so we use Cast to get Tank from Pawn

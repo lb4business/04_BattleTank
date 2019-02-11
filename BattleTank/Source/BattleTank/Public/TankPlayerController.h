@@ -4,6 +4,7 @@
 
 #include "Tank.h"
 #include "CoreMinimal.h"
+#include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
 #include "TankPlayerController.generated.h"
 
@@ -30,6 +31,9 @@ private:
 	UPROPERTY(EditAnywhere) //PROPERTY is a programmed cut-and-paste, happens BEFORE the code is compiled
 	float CrossHairYLocation = 0.33333f;
 
+	UPROPERTY(EditAnywhere) //PROPERTY is a programmed cut-and-paste, happens BEFORE the code is compiled
+	float LineTraceRange = 1000000.f;
+
 	//Start the tank moving the barrel so that a shot would hit where 
 	//crosshair intersects world.
 	void AimTowardsCrosshair();
@@ -39,5 +43,7 @@ private:
 
 	//Get
 	bool GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const;
+
+	bool GetLookVectorHitLocation(FVector& HitLocation, FVector& LookDirection) const;
 
 };
