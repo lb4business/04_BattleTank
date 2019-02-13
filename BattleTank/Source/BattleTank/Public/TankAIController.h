@@ -1,11 +1,12 @@
 // Copyright 2019 Leonid Burylov
 
 #pragma once
-#include "Tank.h"
 #include "Engine/World.h"
 #include "CoreMinimal.h"
 #include "AIController.h"
 #include "TankAIController.generated.h"
+
+class ATank;
 
 /**
  * 
