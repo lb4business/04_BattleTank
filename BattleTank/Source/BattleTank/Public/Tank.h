@@ -46,9 +46,14 @@ private:
 	float LaunchSpeed = 8000; // launch speed in cm/s
 
 	UPROPERTY(EditDefaultsOnly, Category = Firing) //Category is a section in Blueprint Details
+	float ReloadTimeInSeconds = 3;
+
+	UPROPERTY(EditDefaultsOnly, Category = Firing) //Category is a section in Blueprint Details
 	//UClass* ProjectileBlueprint; // Alternative https://api.unrealengine.com/INT/API/Runtime/CoreUObject/Templates/TSubclassOf/index.html
 	TSubclassOf<AProjectile> ProjectileBlueprint;
 
 	//Local barrel reference 
 	UTankBarrel* Barrel = nullptr;
+
+	double LastFireTime = 0;
 };
