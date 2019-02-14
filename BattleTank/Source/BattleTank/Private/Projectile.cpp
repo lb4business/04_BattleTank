@@ -1,4 +1,4 @@
-// Copyright 2019 Leonid Burylov
+ // Copyright 2019 Leonid Burylov
 
 #include "Projectile.h"
 

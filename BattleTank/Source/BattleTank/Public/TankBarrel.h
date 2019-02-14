@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS(meta = (BlueprintSpawnableComponent), hidecategories = ("Collision")) //hide from designers category Collision in Blueprint inspector
+UCLASS(meta = (BlueprintSpawnableComponent))//, hidecategories = ("Collision")) //hide from designers category Collision in Blueprint inspector
 class BATTLETANK_API UTankBarrel : public UStaticMeshComponent
 {
 	GENERATED_BODY()

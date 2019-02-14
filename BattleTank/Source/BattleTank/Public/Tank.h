@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-//#include "TankAimingComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Tank.generated.h"
 
@@ -11,6 +10,7 @@
 class UTankBarrel; 
 class UTankTurret;
 class UTankAimingComponent;
+class AProjectile;
 
 UCLASS()
 class BATTLETANK_API ATank : public APawn
@@ -32,8 +32,6 @@ public:
 	
 	void AimAt(FVector HitLocation);
 
-	UTankBarrel* Barrel = nullptr;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -45,5 +43,12 @@ private:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(EditAnywhere, Category = Firing) //Category is a section in Blueprint Details
-	float LaunchSpeed = 100000; // TODO find a sensible default
+	float LaunchSpeed = 8000; // launch speed in cm/s
+
+	UPROPERTY(EditDefaultsOnly, Category = Firing) //Category is a section in Blueprint Details
+	//UClass* ProjectileBlueprint; // Alternative https://api.unrealengine.com/INT/API/Runtime/CoreUObject/Templates/TSubclassOf/index.html
+	TSubclassOf<AProjectile> ProjectileBlueprint;
+
+	//Local barrel reference 
+	UTankBarrel* Barrel = nullptr;
 };
