@@ -15,7 +15,7 @@ ATank::ATank()
 	PrimaryActorTick.bCanEverTick = false;
 	//No need to protect poiners as added on construction
 	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(FName("Aiming component"));
-	TankMovementComponent = CreateDefaultSubobject<UTankMovementComponent>(FName("Moving component"));
+	//TankMovementComponent = CreateDefaultSubobject<UTankMovementComponent>(FName("Moving component"));
 }
 
 // Called when the game starts or when spawned
@@ -62,6 +62,14 @@ void ATank::Fire()
 		auto BarrelRotation = Barrel->GetSocketRotation(FName("Projectile"));
 		//Spawn a projectile at the socket location of the barrel
 		AProjectile *Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileBlueprint, BarrelLocation, BarrelRotation);
+
+		if (!Projectile)
+		{
+			auto OurTankName = GetName();
+			UE_LOG(LogTemp, Warning, TEXT("Projectile is not assigned for tank: %s"), *OurTankName);
+			return;
+		}
+
 		Projectile->LaunchProjectile(LaunchSpeed);
 
 		LastFireTime = FPlatformTime::Seconds();
