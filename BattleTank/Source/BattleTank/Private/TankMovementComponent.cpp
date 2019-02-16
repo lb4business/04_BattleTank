@@ -30,18 +30,12 @@ void  UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, boo
 
 	auto RightThrow = FVector::CrossProduct(TankForward, AIForwardIntention).Z; //AxB = |A|*|B|*sin(AB)*n //n-unit vector perpendicular. checks "perpendicularity" of 2 vectors
 	IntendTurnRight(RightThrow * 1.5f);
-	//UE_LOG(LogTemp, Warning, TEXT("%s vectoring to: %s"), *ControlledTank, *AIForwardIntention);
  }
 
 
 void UTankMovementComponent::IntendTurnRight(float Throw)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Intend move forward throw: %f"), Throw);
 	if (!LeftTrack || !RightTrack) { return; }
-
-
-	//UE_LOG(LogTemp, Warning, TEXT("vectoring to: %f"), Throw);
-
 	LeftTrack->SetThrottle(-Throw);
 	RightTrack->SetThrottle(Throw);
 }
