@@ -25,6 +25,9 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Setup")
 	ATank* GetControlledTank() const;
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Setup") //with this macro we dont need to Definition of the method
+	void FoundAimingComponent(UTankAimingComponent* AimCompRef);
+
 private:
 	//relative position of crosshair
 	UPROPERTY(EditAnywhere) //PROPERTY is a programmed cut-and-paste, happens BEFORE the code is compiled
