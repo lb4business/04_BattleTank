@@ -27,6 +27,9 @@ void UTankAimingComponent::Initialise(UTankBarrel *BarrelToSet, UTankTurret *Tur
 void UTankAimingComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//we cant fire untill the end of the reload time in the beginning
+	LastFireTime = FPlatformTime::Seconds();
 }
 
 
@@ -34,6 +37,29 @@ void UTankAimingComponent::BeginPlay()
 void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if ((FPlatformTime::Seconds() - LastFireTime) < ReloadTimeInSeconds)
+	{
+		FiringState = EFiringState::Reloading;
+	}
+	else if (IsBarrelMoving())
+	{
+		FiringState = EFiringState::Aiming;
+	}
+	else
+	{
+		FiringState = EFiringState::Locked;
+	}
+}
+
+
+bool UTankAimingComponent::IsBarrelMoving()
+{
+	if (!ensure(Barrel)) { return false; }
+
+	auto BarrelForvard = Barrel->GetForwardVector();
+
+	return !BarrelForvard.Equals(AimDirection, 0.01f);
 }
 
 
@@ -61,7 +87,7 @@ void UTankAimingComponent::AimAt(FVector HitLocation)
 
 	if (bHaveimSolution)
 	{
-		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
+		AimDirection = OutLaunchVelocity.GetSafeNormal();
 		MoveBarrelTowards(AimDirection);
 		//UE_LOG(LogTemp, Warning, TEXT("TossVelocity: %s"), *(AimDirection.ToString()));
 	}
@@ -85,14 +111,14 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 
 void UTankAimingComponent::Fire()
 {
-	if (!ensure(Barrel)) { return; }
-
-	bool BIsReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
-
-	if (BIsReloaded)
+	if (FiringState!= EFiringState::Reloading)
 	{
+		if (!ensure(Barrel)) { return; }
+		if (!ensure(ProjectileBlueprint)) { return; }
+
 		auto BarrelLocation = Barrel->GetSocketLocation(FName("Projectile"));
 		auto BarrelRotation = Barrel->GetSocketRotation(FName("Projectile"));
+
 		//Spawn a projectile at the socket location of the barrel
 		AProjectile *Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileBlueprint, BarrelLocation, BarrelRotation);
 

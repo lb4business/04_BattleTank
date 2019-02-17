@@ -40,11 +40,13 @@ public:
 
 	void AimAt(FVector WorldSpaceAim);
 
+	bool IsBarrelMoving();
+
 	UFUNCTION(BlueprintCallable)
 	void Fire();
 
 	UPROPERTY(BlueprintReadOnly, Category = "State")
-		EFiringState FiringState = EFiringState::Locked;
+	EFiringState FiringState = EFiringState::Locked;
 
 protected:
 	// Called when the game starts
@@ -75,4 +77,6 @@ private:
 	TSubclassOf<AProjectile> ProjectileBlueprint;
 
 	double LastFireTime = 0;
+
+	FVector AimDirection;
 };
