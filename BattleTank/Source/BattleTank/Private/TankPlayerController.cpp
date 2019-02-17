@@ -1,7 +1,6 @@
 // Copyright 2019 Leonid Burylov
 
 #include "TankPlayerController.h"
-#include "Tank.h"
 #include "Engine/World.h"
 #include "TankAimingComponent.h"
 
@@ -9,27 +8,9 @@ void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	auto ControlledTank = GetControlledTank();
-
-	if (!ensure(ControlledTank))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PlayerController not posessing a tank"));
-		return;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PlayerController posessing: %s"), *(ControlledTank->GetName()));
-	}
-
-	auto AimingComponent = ControlledTank->FindComponentByClass<UTankAimingComponent>();
-	if (AimingComponent)
-	{
-		FoundAimingComponent(AimingComponent);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("AimingComponent is not found: %s"), *(ControlledTank->GetName()));
-	}
+	auto AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
+	if (!ensure(AimingComponent)) { return; }
+	FoundAimingComponent(AimingComponent);
 }
 
 // Called every frame
@@ -41,30 +22,18 @@ void ATankPlayerController::Tick(float DeltaTime)
 }
 
 
-ATank* ATankPlayerController::GetControlledTank() const
-{
-	return Cast<ATank>(GetPawn()); //What tank are we controlling? TANK is a child of PAWN, so we use Cast to get Tank from Pawn
-}
-
-
 void ATankPlayerController::AimTowardsCrosshair()
 {
-	if (!ensure(GetControlledTank())) { return; }
+	auto AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
+	if (!ensure(AimingComponent)) { return; }
 
-	FVector HitLocation;
+	FVector HitLocation; //OUT parameter
 
 	if (GetSightRayHitLocation(HitLocation)) //has a "side-effect" of line-tracing
 	{
 		//TODO tell a tank to aim at this point
-		GetControlledTank()->AimAt(HitLocation);
+		AimingComponent->AimAt(HitLocation);
 	}
-
-
-
-	//Get world location of linetrace through crosshair
-	//If it hits the landscape
-		//tell controlled tank to aim at this point
-
 }
 
 //Get world location of literace through crosshair, trie if hits landscape

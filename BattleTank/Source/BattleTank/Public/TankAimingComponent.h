@@ -19,6 +19,7 @@ enum class EFiringState : uint8
 //Forward declaraction
 class UTankBarrel; 
 class UTankTurret;
+class AProjectile;
 
 // Holds barrel's parameters and Elevate method 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -37,7 +38,13 @@ public:
 
 	void SetTurretReference(UTankTurret* TurretToSet);
 
-	void AimAt(FVector WorldSpaceAim, float LaunchSpeed);
+	void AimAt(FVector WorldSpaceAim);
+
+	UFUNCTION(BlueprintCallable)
+	void Fire();
+
+	UPROPERTY(BlueprintReadOnly, Category = "State")
+		EFiringState FiringState = EFiringState::Locked;
 
 protected:
 	// Called when the game starts
@@ -46,12 +53,26 @@ protected:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UPROPERTY(BlueprintReadOnly, Category = "State")
-	EFiringState FiringState = EFiringState::Aiming;
+	/*UPROPERTY(BlueprintReadOnly, Category = "State")
+	EFiringState FiringState = EFiringState::Aiming;*/
 
 private:
 	UTankBarrel* Barrel = nullptr;
 	UTankTurret* Turret = nullptr;
 
 	void MoveBarrelTowards(FVector AimDirection);
+
+	//remove as it moving shooting to aiming component
+	UPROPERTY(EditAnywhere, Category = Firing) //Category is a section in Blueprint Details
+	float LaunchSpeed = 8000; // launch speed in cm/s
+
+	private:
+	UPROPERTY(EditDefaultsOnly, Category = Firing) //Category is a section in Blueprint Details
+	float ReloadTimeInSeconds = 3;
+
+	UPROPERTY(EditDefaultsOnly, Category = Firing) //Category is a section in Blueprint Details
+	//UClass* ProjectileBlueprint; // Alternative https://api.unrealengine.com/INT/API/Runtime/CoreUObject/Templates/TSubclassOf/index.html
+	TSubclassOf<AProjectile> ProjectileBlueprint;
+
+	double LastFireTime = 0;
 };

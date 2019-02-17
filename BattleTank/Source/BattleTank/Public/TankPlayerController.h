@@ -6,8 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "TankPlayerController.generated.h"
 
-class ATank;
-
+class UTankAimingComponent;
 /**
  * 
  */
@@ -22,9 +21,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	UFUNCTION(BlueprintCallable, Category = "Setup")
-	ATank* GetControlledTank() const;
-
 	UFUNCTION(BlueprintImplementableEvent, Category = "Setup") //with this macro we dont need to Definition of the method
 	void FoundAimingComponent(UTankAimingComponent* AimCompRef);
 
@@ -50,5 +46,4 @@ private:
 	bool GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const;
 
 	bool GetLookVectorHitLocation(FVector& HitLocation, FVector& LookDirection) const;
-
 };
