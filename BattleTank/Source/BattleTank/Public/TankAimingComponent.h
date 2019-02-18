@@ -79,5 +79,6 @@ private:
 
 	FVector AimDirection;
 
-	int32 RoundsLeft = 3;
+	UPROPERTY(EditDefaultsOnly, Category = Firing) //Category is a section in Blueprint Details
+	int32 RoundsLeft = 10;
 };
