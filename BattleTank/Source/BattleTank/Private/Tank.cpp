@@ -13,7 +13,18 @@ ATank::ATank()
 	//No need to protect poiners as added on construction
 	//TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(FName("Aiming component"));
 	//TankMovementComponent = CreateDefaultSubobject<UTankMovementComponent>(FName("Moving component"));
+
+
 }
+
+
+void ATank::BeginPlay()
+{
+	Super::BeginPlay();
+
+	CurrentHealth = StartingHealth;
+}
+
 
 float ATank::TakeDamage
 (
@@ -30,10 +41,10 @@ float ATank::TakeDamage
 	CurrentHealth -= DamageToApply;
 	if (CurrentHealth <= 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TANK TANK"));
+		OnDeath.Broadcast();
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Damage amaunt = %i , DamageToApply = %i"), DamagePoints, DamageToApply);
+	//UE_LOG(LogTemp, Warning, TEXT("Damage amaunt = %i , DamageToApply = %i"), DamagePoints, DamageToApply);
 
 	return DamageAmount;
 }
