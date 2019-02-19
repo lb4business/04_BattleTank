@@ -2,6 +2,7 @@
 
 #include "SpawnPoint.h"
 #include "Engine/World.h"
+#include "SprungWheel.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -29,7 +30,10 @@ void USpawnPoint::BeginPlay()
 	if (!NewActor) return;
 
 	NewActor->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);
+
 	UGameplayStatics::FinishSpawningActor(NewActor, GetComponentTransform());
+
+	SpawnedActor = NewActor;
 }
 
 
@@ -39,5 +43,10 @@ void USpawnPoint::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+AActor* USpawnPoint::GetSpawnedActor() const
+{
+	return SpawnedActor;
 }
 

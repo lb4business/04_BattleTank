@@ -2,6 +2,9 @@
 
 #include "TankTrack.h"
 #include "Engine/World.h"
+#include "SprungWheel.h"
+#include "Components/SceneComponent.h"
+#include "SpawnPoint.h"
 
 UTankTrack::UTankTrack()
 {
@@ -9,26 +12,44 @@ UTankTrack::UTankTrack()
 }
 
 
-void UTankTrack::BeginPlay()
+/*void UTankTrack::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OnComponentHit.AddDynamic(this, &UTankTrack::OnHit); //Register delegate OnComponentHit
-}
+	//OnComponentHit.AddDynamic(this, &UTankTrack::OnHit); //Register delegate OnComponentHit
+}*/
 
 
-void UTankTrack::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+/*void UTankTrack::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
 	//Drive the tracks
-	DriveTrack();
+	//DriveTrack(); //Moved to Wheel
 
 	//Apply sideways force
-	ApplySidewaysForce();
+	//ApplySidewaysForce();
 
 	//Reset throttle
-	CurrentThrottle = 0;
-}
+	//CurrentThrottle = 0;
+}*/
 
+
+TArray<ASprungWheel*> UTankTrack::GetWheels() const
+{
+	TArray<ASprungWheel*> ResultArray;
+	TArray<USceneComponent*> Children;
+	GetChildrenComponents(true, Children);
+	for (USceneComponent* Child : Children)
+	{
+		auto SpawnPointChild = Cast<USpawnPoint>(Child);
+		if (!SpawnPointChild) continue;
+		AActor* SpawnChild = SpawnPointChild->GetSpawnedActor();
+		auto SprungWheel = Cast<ASprungWheel>(SpawnChild);
+		if(!SprungWheel) continue;
+		ResultArray.Add(SprungWheel);
+	}
+
+	return ResultArray;
+}
 
 void UTankTrack::ApplySidewaysForce()
 {
@@ -48,15 +69,32 @@ void UTankTrack::ApplySidewaysForce()
 
 void UTankTrack::SetThrottle(float Throttle)
 {
-	CurrentThrottle = FMath::Clamp<float>(CurrentThrottle + Throttle, -1, 1);
+	//CurrentThrottle = FMath::Clamp<float>(CurrentThrottle + Throttle, -1, 1);
+	float CurrentThrottle = FMath::Clamp<float>(Throttle, -1, 1);
+	DriveTrack(CurrentThrottle);
 }
 
 
-void UTankTrack::DriveTrack()
+void UTankTrack::DriveTrack(float CurrentThrottle)
 {
 	//TODO clamp actual throttle value so player cant over-drive
+	
+	/*
+	//direct force to mesh
 	auto ForceApplied = GetForwardVector() * CurrentThrottle * TrackMaxDrivingForce;
 	auto ForceLocation = GetComponentLocation();
 	auto TankRoot = Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent());
-	TankRoot->AddForceAtLocation(ForceApplied, ForceLocation);
+	TankRoot->AddForceAtLocation(ForceApplied, ForceLocation);*/
+
+	//Force to wheels
+	auto ForceApplied = CurrentThrottle * TrackMaxDrivingForce;
+	auto Wheels = GetWheels();
+	if (Wheels.Num() < 1) return;
+
+	auto ForcePerWheel = ForceApplied / Wheels.Num();
+
+	for (ASprungWheel* Wheel : Wheels)
+	{
+		Wheel->AddDrivingForce(ForcePerWheel);
+	}
 }
